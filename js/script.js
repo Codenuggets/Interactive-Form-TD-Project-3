@@ -65,7 +65,7 @@ $('input[name="node"]').change(function() {
 });
 
 $(".activities").append('<div id="running-total"></div>');
-
+document.getElementById("running-total").innerHTML = '<p>Total: $0</p>';
 
 $('.activities input[type=checkbox]').change(function(){
   let runningTotal = 0;
@@ -90,3 +90,25 @@ $('.activities input[type=checkbox]').change(function(){
 $("#payment option:contains('Credit Card')").prop('selected', true);
 $('#paypalJS').hide();
 $('#bitcoinJS').hide();
+$('#payment option[value="select_method"]').hide();
+
+$('#payment').change(function(){
+  if(this.value === 'credit card') {
+    $('#credit-card').show();
+    $('#paypalJS').hide();
+    $('#bitcoinJS').hide();
+  } else if(this.value === 'paypal'){
+    $('#paypalJS').show();
+    $('#credit-card').hide();
+    $('#bitcoinJS').hide();
+  } else if(this.value === 'bitcoin'){
+    $('#bitcoinJS').show();
+    $('#paypalJS').hide();
+    $('#credit-card').hide();
+  }
+});
+
+// Form Validation
+$('form').submit(function() {
+  
+});
