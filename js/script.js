@@ -27,7 +27,64 @@ $('#design').change(function(){
 });
 
 // Register for activities Info
+$('input[name="js-frameworks"]').change(function() {
+  if(this.checked) {
+    $('input[name="express"]').prop("disabled", "disabled");
+    $('#express-label').css("color", "grey");
+  } else {
+    $('input[name="express"]').prop("disabled", "");
+    $('#express-label').css("color", "#000");
+  }
+});
+$('input[name="express"]').change(function() {
+  if(this.checked) {
+    $('input[name="js-frameworks"]').prop("disabled", "disabled");
+    $('#frameworks-label').css("color", "grey");
+  } else {
+    $('input[name="js-frameworks"]').prop("disabled", "");
+    $('#frameworks-label').css("color", "#000");
+  }
+});
+$('input[name="js-libs"]').change(function() {
+  if(this.checked) {
+    $('input[name="node"]').prop("disabled", "disabled");
+    $('#node-label').css("color", "grey");
+  } else {
+    $('input[name="node"]').prop("disabled", "");
+    $('#node-label').css("color", "#000");
+  }
+});
+$('input[name="node"]').change(function() {
+  if(this.checked) {
+    $('input[name="js-libs"]').prop("disabled", "disabled");
+    $('#libraries-label').css("color", "grey");
+  } else {
+    $('input[name="js-libs"]').prop("disabled", "");
+    $('#libraries-label').css("color", "#000");
+  }
+});
 
+$(".activities").append('<div id="running-total"></div>');
+
+
+$('.activities input[type=checkbox]').change(function(){
+  let runningTotal = 0;
+  $('input:checked').each(function(){
+    let price = this.parentNode.innerText.match(/\$\d+/g);
+    price = price.join();
+    price = price.replace(/\$/, '');
+    console.log(this.parentNode.innerText);
+    console.log(price);
+    runningTotal += parseInt(price);
+    document.getElementById("running-total").innerHTML = `<p>Total: $${runningTotal}</p>`;
+  });
+  // Resets runningTotal to 0 if all boxes are unchecked
+  if(!$('input:checked').length){
+    runningTotal = 0;
+    document.getElementById("running-total").innerHTML = `<p>Total: $${runningTotal}</p>`;
+  }
+
+});
 
 // Payment Info
 $("#payment option:contains('Credit Card')").prop('selected', true);
