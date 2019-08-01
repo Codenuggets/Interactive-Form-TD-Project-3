@@ -1,4 +1,4 @@
-//Basic Info
+//***********Basic Info******************//
 
 // Intializes basic info fieldset by focusing name field and hiding other job input
 $('#name').focus();
@@ -51,11 +51,24 @@ $('#title').change(function(){
   if(this.value === 'other') {
     $('#other-title').show();
   } else {
+    // If the user switches to something other than other, the job role input field is hidden and reset
     $('#other-title').hide();
+    $('#other-title').css('border-color', '#b0d3e2');
+    noError = true;
   }
-})
+});
 
-// T-Shirt Info
+
+$('#other-title').change(function(){
+  if(this.value.length === 0) {
+    $(this).css('border-color', 'red');
+  } else {
+    $(this).css('border-color', '#b0d3e2');
+    noError = true;
+  }
+});
+
+//*********************T-Shirt Info*******************//
 
 // Initializes T-shirt info by hiding color option before a design is chosen
 $('#colors-js-puns select').hide();
@@ -92,7 +105,7 @@ $('#design').change(function(){
   }
 });
 
-// Register for activities Info
+//***************Register for activities Info********************//
 
 // Checks for conflicting schedules for js frameworks event
 $('input[name="js-frameworks"]').change(function() {
@@ -171,7 +184,7 @@ $('.activities input[type=checkbox]').change(function(){
   }
 });
 
-// Payment Info
+//*************Payment Info******************//
 
 // Starts with showing credit card as initial option
 $("#payment option:contains('Credit Card')").prop('selected', true);
@@ -216,8 +229,7 @@ $('#cc-num').keyup(function(){
       // Checks to see that the length is correct and that all that inputs are numbers
       if($(this).val().length < 13 ||
          $(this).val().length > 16 ||
-         /^\d+$/.test($(this).val()) === false ||
-         $(this).val().length != 0) {
+         /^\d+$/.test($(this).val()) === false) {
            $(this).css('border-color', 'red');
            document.getElementById('cc-num-validator').innerHTML = '<p>Must be a Number between 13 and 16 digits long</p>';
            noError = false;
@@ -256,7 +268,6 @@ $('#zip').keyup(function(){
 }
 });
 
-
 // Prepares CVV error validator div
 $('label[for="cvv"]').append('<div id="cvv-validator" style="color: red"></div>');
 // CVV Validator
@@ -281,59 +292,49 @@ $('#cvv').keyup(function(){
 }
 });
 
+//*****************Form Validation***********************//
 
-
-// Form Validation
 $('form').submit(function() {
   // Prepares submission validation error message div
   $('button[type="submit"]').append('<div id="submit-validator" style="color: red"></div>');
   // First checks for noError value if something was already caught
   if(noError === false) {
     document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct</p>';
-    // If noError is flagged, all input fields are checked to see if empty
-    $('input[type="text"]').each(function() {
-      // If empty, they will be marked
-      if($(this).val().trim() === '' && this.id != 'other-title') {
-        document.getElementById(`${this.id}-validator`).innerHTML = '<p>This field cannot be empty</p>';
-        $(this).css('border-color', 'red');
-      }
-    });
-    // Seperate check for email since type input is not text
-    if($('#mail').val() === '') {
-      document.querySelector('#email-validator').innerHTML = '<p>Please enter your email address</p>';
-    }
   }
-  //Checks to make sure name field isn't empty
-  else if ($('#name').val().trim() === '') {
-    document.querySelector('#name-validator').innerHTML = '<p>Please Enter Your Name</p>';
-    document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Empty Name Field)</p>';
-    noError = false;
-  }
-  // Checks to see if email field isn't empty
-  else if ($('#mail').val().trim() === '') {
-    $('#mail').css('border-color', 'red');
-    document.querySelector('#email-validator').innerHTML = '<p>Please enter your email address</p>';
-    document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Incorrect Email Field)</p>';
-    noError = false;
-  }
-  // first checks to see if credit card is the selected payment option
-  else if($('#payment').val() === 'credit card') {
-    // Then iterates through each input field to make sure they aren't empty
-    $('#credit-card input').each(function() {
-      if($(this).val().trim() === '') {
-        $(this).css('border-color', 'red');
-        document.getElementById(`${this.id}-validator`).innerHTML = '<p>This field cannot be empty</p>';
-        document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Credit Card Info Invalid)</p>';
-        noError = false;
-      }
-    });
-  }
+
   // Checks to make sure at least one activity is selected
-  else if($('.activities input:checked').length === 0) {
-    document.getElementById("running-total").innerHTML = `<p>Total: $${runningTotal}</p></br><p style='color: red'>Please Select at Least One activity</p>`;
+  else if($('input:checked').length === 0) {
+    document.getElementById('running-total').innerHTML = `<p>Total: $0</p></br><p style='color: red'>Please Select at Least One activity</p>`;
     document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Please Select at least one activity)</p>';
     noError = false;
   }
+  // Before submission, all input fields are checked to see if empty
+  $('input[type="text"]').each(function() {
+    // If empty, they will be marked
+    if($(this).val().trim() === '' && this.id != 'other-title') {
+      if(this.id != 'name' && $('#payment').val() === 'credit card') {
+        document.getElementById(`${this.id}-validator`).innerHTML = '<p>This field cannot be empty</p>';
+        $(this).css('border-color', 'red');
+        noError = false;
+      } else if(this.id === 'name'){
+        // Checks name field, if empty, it highlights and prevents form submission
+        document.getElementById(`${this.id}-validator`).innerHTML = '<p>This field cannot be empty</p>';
+        $(this).css('border-color', 'red');
+        noError = false;
+      }
+
+    } else if($('#title').val() === 'other' && this.id === 'other-title' && $('#other-title').val() === '') {
+      // If other job is selected but role isn't, it will be indicated that it has to be filled
+      $(this).css('border-color', 'red');
+      console.log($(this));
+      noError = false;
+    } else if($('#mail').val() === '') {
+      // Email is checked, if empty it's flagged
+      document.querySelector('#email-validator').innerHTML = '<p>Please enter your email address</p>';
+      $('#mail').css('border-color', 'red');
+      noError = false;
+        }
+  });
   // After all conditions are checked, noError is returned, if there is an error, false is returned with an error message
   return noError;
 });
