@@ -214,7 +214,31 @@ $('#cvv').keyup(function(){
 
 // Form Validation
 $('form').submit(function() {
-  
+  $('button[type="submit"]').append('<div id="submit-validator" style="color: red"></div>');
+  if(noError === false) {
+    document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct</p>';
+  } else if ($('#name').val().trim() === '') {
+    $('#name').css('border-color', 'red');
+    document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Empty Name Field)</p>';
+    noError = false;
+  } else if ($('#mail').val().trim() === '') {
+    $('#mail').css('border-color', 'red');
+    document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Incorrect Email Field)</p>';
+    noError = false;
+  } else if($('#payment').val() === 'credit card') {
+    $('#credit-card input').each(function() {
+      if($(this).val().trim() === '') {
+        $(this).css('border-color', 'red');
+        document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Credit Card Info Invalid)</p>';
+        noError = false;
+      }
+    });
+  } else if($('.activities input:checked').length === 0) {
+    document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Please Select at least one activity)</p>';
+    noError = false;
+  }
+
+  return noError;
 });
 
 // else if(!$('input:checked').length) {
