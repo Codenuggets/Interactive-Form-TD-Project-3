@@ -24,4 +24,4 @@ In this section, options are filtered and disabled if conflicting events were ch
 In this section, the bitcoin and paypal messages are hidden with the credit card option being the initial choice presented to the user. Errors are show if the fields are empty or are of insufficient length. These values are also checked to ensure no non digits were entered.
 
 ## Form Validation
-One final check is done once the submit button is clicked. This first checks for the `noError` value and highlights any text fields left empty. After that, all other fields are checked and approriate error messages are displayed in the button and in it's corresponding field.
+One final check is done once the submit button is clicked. This first checks for the `noError` value and highlights any text fields left empty. After that, all other fields are checked and appropriate error messages are displayed in the button and in it's corresponding field.
