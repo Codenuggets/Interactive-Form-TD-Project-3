@@ -210,7 +210,7 @@ $('#cc-num').keyup(function(){
     // Checks to make sure a number has been inputted before checking other issues
     if($(this).val().length === 0) {
       $(this).css('border-color', 'red');
-      document.getElementById('cc-num-validator').innerHTML = '<p>Please Enter a Credit Card Number</p>';
+      document.getElementById('cc-num-validator').innerHTML = '<p>Please Enter your Credit Card Number</p>';
       noError = false;
     } else {
       // Checks to see that the length is correct and that all that inputs are numbers
@@ -236,8 +236,14 @@ $('label[for="zip"]').append('<div id="zip-validator" style="color: red"></div>'
 // Zip Code Validator
 $('#zip').keyup(function(){
   if($('#payment').val() === 'credit card') {
+    if($(this).val().length === 0) {
+      $(this).css('border-color', 'red');
+      document.getElementById('zip-validator').innerHTML = '<p>Please Enter your Billing Zip Code</p>';
+      noError = false;
+    }
     // Checks to make sure length is 5 and a number
-    if($(this).val().length != 5 || /^\d+$/.test($(this).val()) === false) {
+    else {
+      if ($(this).val().length != 5 || /^\d+$/.test($(this).val()) === false) {
       $(this).css('border-color', 'red');
       document.getElementById('zip-validator').innerHTML = '<p>Must be a Number that is 5 digits long</p>';
       noError = false;
@@ -247,13 +253,20 @@ $('#zip').keyup(function(){
       noError = true;
     }
   }
+}
 });
+
 
 // Prepares CVV error validator div
 $('label[for="cvv"]').append('<div id="cvv-validator" style="color: red"></div>');
 // CVV Validator
 $('#cvv').keyup(function(){
   if($('#payment').val() === 'credit card') {
+    if($(this).val().length === 0) {
+      $(this).css('border-color', 'red');
+      document.getElementById('cvv-validator').innerHTML = '<p>Please Enter your CVV Code</p>';
+      noError = false;
+    } else {
     // Checks to make sure cvv is 3 digits long
     if($(this).val().length != 3 || /^\d+$/.test($(this).val()) === false) {
       $(this).css('border-color', 'red');
@@ -265,6 +278,7 @@ $('#cvv').keyup(function(){
       noError = true;
     }
   }
+}
 });
 
 
