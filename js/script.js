@@ -7,7 +7,10 @@ $('#other-title').hide();
 // global varbiable to keep track of form errors for final form submission check
 let noError = true;
 
+// Initializes name validator error message div
 $("label[for='name']").append('<div id="name-validator" style="color: red"></div>');
+
+// Checks to make sure user doesn't leave field empty
 $('#name').keyup(function() {
   if($(this).val().trim() === '') {
       document.querySelector('#name-validator').innerHTML = '<p>Please Enter Your Name</p>';
@@ -24,7 +27,7 @@ $('#name').keyup(function() {
 const emailRegex = /\w+@\w+\.(com|net)/;
 
 // Initializes div for error message that is updated in real time
-$("label[for='mail']").append('<div id="email-validator"></div>');
+$("label[for='mail']").append('<div id="email-validator" style="color: red"></div>');
 
 // keyup called on email input for real time validation
 $('#mail').keyup(function(){
@@ -32,7 +35,7 @@ $('#mail').keyup(function(){
   if(!emailRegex.test($(this).val())){
     // If a valid email hasn't been inputted, an error message is displayed
     document.querySelector('#email-validator').innerHTML = '<p>Must be valid email address</p>';
-    $('#email-validator').css('color', 'red');
+    //$('#email-validator').css('color', 'red');
     $(this).css('border-color', 'red');
     noError = false;
   } else {
@@ -273,10 +276,21 @@ $('form').submit(function() {
   // First checks for noError value if something was already caught
   if(noError === false) {
     document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct</p>';
+    // If noError is flagged, all input fields are checked to see if empty
+    $('input[type="text"]').each(function() {
+      // If empty, they will be marked
+      if($(this).val().trim() === '' && this.id != 'other-title') {
+        document.getElementById(`${this.id}-validator`).innerHTML = '<p>This field cannot be empty</p>';
+        $(this).css('border-color', 'red');
+      }
+    });
+    // Seperate check for email since type input is not text
+    if($('#mail').val() === '') {
+      document.querySelector('#email-validator').innerHTML = '<p>Please enter your email address</p>';
+    }
   }
   //Checks to make sure name field isn't empty
   else if ($('#name').val().trim() === '') {
-    $('#name').css('border-color', 'red');
     document.querySelector('#name-validator').innerHTML = '<p>Please Enter Your Name</p>';
     document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Empty Name Field)</p>';
     noError = false;
