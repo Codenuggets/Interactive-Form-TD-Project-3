@@ -4,6 +4,7 @@
 $('#name').focus();
 $('#other-title').hide();
 
+// global varbiable to keep track of form errors for final form submission check
 let noError = true;
 
 $('#name').change(function() {
@@ -51,12 +52,17 @@ $('#title').change(function(){
 // T-Shirt Info
 
 // Initializes T-shirt info by hiding color option before a design is chosen
-$('#colors-js-puns').hide();
+$('#colors-js-puns select').hide();
+// While no design is chosen, a message displays, instructing user to select design first
+$("#colors-js-puns").append('<div id="select-design"><p>Please select a T-shirt theme</p></div>');
+
 
 // Shows and hides the color select and filters which options are available based on chosen design
 $('#design').change(function(){
   if(this.value === 'js puns') {
-    $('#colors-js-puns').show();
+    // Erases message about selecting design and displays color options specific to design choice
+    document.getElementById('select-design').innerHTML = '';
+    $('#colors-js-puns select').show();
     $('#color option[value="cornflowerblue"]').show().prop("selected", true);
     $('#color option[value="darkslategrey"]').show();
     $('#color option[value="gold"]').show();
@@ -64,7 +70,9 @@ $('#design').change(function(){
     $('#color option[value="steelblue"]').hide();
     $('#color option[value="dimgrey"]').hide();
   } else if(this.value === 'heart js') {
-    $('#colors-js-puns').show();
+    // Erases message about selecting design and displays color options specific to design choice
+    document.getElementById('select-design').innerHTML = '';
+    $('#colors-js-puns select').show();
     $('#color option[value="cornflowerblue"]').hide();
     $('#color option[value="darkslategrey"]').hide();
     $('#color option[value="gold"]').hide();
@@ -72,20 +80,30 @@ $('#design').change(function(){
     $('#color option[value="steelblue"]').show();
     $('#color option[value="dimgrey"]').show();
   } else {
-    $('#colors-js-puns').hide();
+    // Redisplays select a design message and hides color options, if no design is chosen
+    document.getElementById('select-design').innerHTML = 'Please select a T-shirt theme';
+    $('#colors-js-puns select').hide();
   }
 });
 
 // Register for activities Info
+
+// Checks for conflicting schedules for js frameworks event
 $('input[name="js-frameworks"]').change(function() {
+  // Checks for conflicting events and disables them if checked
   if(this.checked) {
     $('input[name="express"]').prop("disabled", "disabled");
+    // greys out for visual indication
     $('#express-label').css("color", "grey");
   } else {
+    // Reenbles events if unchecked
     $('input[name="express"]').prop("disabled", "");
+    // returns color to black if greyed out
     $('#express-label').css("color", "#000");
   }
 });
+
+// Checks for conflicting schedules for express event
 $('input[name="express"]').change(function() {
   if(this.checked) {
     $('input[name="js-frameworks"]').prop("disabled", "disabled");
@@ -95,6 +113,8 @@ $('input[name="express"]').change(function() {
     $('#frameworks-label').css("color", "#000");
   }
 });
+
+// Checks for conflicting schedules for js libraries event
 $('input[name="js-libs"]').change(function() {
   if(this.checked) {
     $('input[name="node"]').prop("disabled", "disabled");
@@ -104,6 +124,7 @@ $('input[name="js-libs"]').change(function() {
     $('#node-label').css("color", "#000");
   }
 });
+// Checks for conflicting schedules for node event
 $('input[name="node"]').change(function() {
   if(this.checked) {
     $('input[name="js-libs"]').prop("disabled", "disabled");
@@ -114,18 +135,25 @@ $('input[name="node"]').change(function() {
   }
 });
 
+// Creates and attaches running total div
 $(".activities").append('<div id="running-total"></div>');
 document.getElementById("running-total").innerHTML = '<p>Total: $0</p>';
 
+// Checks each time a box is unchecked/checked and updates runningTotal price
 $('.activities input[type=checkbox]').change(function(){
   let runningTotal = 0;
   $('input:checked').each(function(){
+    // grabs price from inner text of event description
     let price = this.parentNode.innerText.match(/\$\d+/g);
+
+    // Cleans up price to just be an number
     price = price.join();
     price = price.replace(/\$/, '');
-    console.log(this.parentNode.innerText);
-    console.log(price);
+
+    // Converts price into int from string and adds to running total
     runningTotal += parseInt(price);
+
+    //updates running total
     document.getElementById("running-total").innerHTML = `<p>Total: $${runningTotal}</p>`;
     noError = true;
   });
@@ -139,11 +167,17 @@ $('.activities input[type=checkbox]').change(function(){
 });
 
 // Payment Info
+
+// Starts with showing credit card as initial option
 $("#payment option:contains('Credit Card')").prop('selected', true);
+
+// Hides the paypal and bitcoin messages since credit card is selected
 $('#paypalJS').hide();
 $('#bitcoinJS').hide();
+// hides select method option since payment is required
 $('#payment option[value="select_method"]').hide();
 
+// Checks for which payment option is selects and shows the message/ form inputs that coorelate with the selected option
 $('#payment').change(function(){
   if(this.value === 'credit card') {
     $('#credit-card').show();
@@ -160,28 +194,36 @@ $('#payment').change(function(){
   }
 });
 
-  $('label[for="cc-num"]').append('<div id="cc-num-validator" style="color: red"></div>');
+// Gets div ready for cc number validator message
+$('label[for="cc-num"]').append('<div id="cc-num-validator" style="color: red"></div>');
 // Credit Card validator
 $('#cc-num').keyup(function(){
+  // Prechecks that the payment method selected is the credit card
   if($('#payment').val() === 'credit card'){
+    // Checks to see that the length is correct and that all that inputs are numbers
     if($(this).val().length < 13 ||
        $(this).val().length > 16 ||
        /^\d+$/.test($(this).val()) === false) {
          $(this).css('border-color', 'red');
          document.getElementById('cc-num-validator').innerHTML = '<p>Must be a Number between 13 and 16 digits long</p>';
+         noError = false;
 
        } else {
          $(this).css('border-color', '#b0d3e2');
          document.getElementById('cc-num-validator').innerHTML = '';
+         noError = true;
        }
   }
 });
 
+// Sets up validator message div for zip code
 $('label[for="zip"]').append('<div id="zip-validator" style="color: red"></div>');
+
 // Zip Code Validator
 $('#zip').keyup(function(){
   if($('#payment').val() === 'credit card') {
-    if($(this).val().length != 5) {
+    // Checks to make sure length is 5 and a number
+    if($(this).val().length != 5 || /^\d+$/.test($(this).val()) === false) {
       $(this).css('border-color', 'red');
       document.getElementById('zip-validator').innerHTML = '<p>Must be a Number that is 5 digits long</p>';
       noError = false;
@@ -198,7 +240,8 @@ $('label[for="cvv"]').append('<div id="cvv-validator" style="color: red"></div>'
 // CVV Validator
 $('#cvv').keyup(function(){
   if($('#payment').val() === 'credit card') {
-    if($(this).val().length != 3) {
+    // Checks to make sure cvv is 3 digits long
+    if($(this).val().length != 3 || /^\d+$/.test($(this).val()) === false) {
       $(this).css('border-color', 'red');
       document.getElementById('cvv-validator').innerHTML = '<p>Must be a Number that is 3 digits long</p>';
       noError = false;
@@ -214,18 +257,27 @@ $('#cvv').keyup(function(){
 
 // Form Validation
 $('form').submit(function() {
+  // Prepares submission validation error message div
   $('button[type="submit"]').append('<div id="submit-validator" style="color: red"></div>');
+  // First checks for noError value if something was already caught
   if(noError === false) {
     document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct</p>';
-  } else if ($('#name').val().trim() === '') {
+  }
+  //Checks to make sure name field isn't empty
+  else if ($('#name').val().trim() === '') {
     $('#name').css('border-color', 'red');
     document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Empty Name Field)</p>';
     noError = false;
-  } else if ($('#mail').val().trim() === '') {
+  }
+  // Checks to see if email field isn't empty
+  else if ($('#mail').val().trim() === '') {
     $('#mail').css('border-color', 'red');
     document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Incorrect Email Field)</p>';
     noError = false;
-  } else if($('#payment').val() === 'credit card') {
+  }
+  // first checks to see if credit card is the selected payment option
+  else if($('#payment').val() === 'credit card') {
+    // Then iterates through each input field to make sure they aren't empty
     $('#credit-card input').each(function() {
       if($(this).val().trim() === '') {
         $(this).css('border-color', 'red');
@@ -233,15 +285,12 @@ $('form').submit(function() {
         noError = false;
       }
     });
-  } else if($('.activities input:checked').length === 0) {
+  }
+  // Checks to make sure at least one activity is selected
+  else if($('.activities input:checked').length === 0) {
     document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Please Select at least one activity)</p>';
     noError = false;
   }
-
+  // After all conditions are checked, noError is returned, if there is an error, false is returned with an error message
   return noError;
 });
-
-// else if(!$('input:checked').length) {
-//  document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Length)</p>';
-//  noError = false;
-// }
