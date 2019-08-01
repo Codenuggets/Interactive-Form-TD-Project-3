@@ -7,11 +7,14 @@ $('#other-title').hide();
 // global varbiable to keep track of form errors for final form submission check
 let noError = true;
 
-$('#name').change(function() {
+$("label[for='name']").append('<div id="name-validator" style="color: red"></div>');
+$('#name').keyup(function() {
   if($(this).val().trim() === '') {
+      document.querySelector('#name-validator').innerHTML = '<p>Please Enter Your Name</p>';
       $(this).css('border-color', 'red');
       noError = false;
   } else {
+    document.querySelector('#name-validator').innerHTML = '';
     $(this).css('border-color', '#b0d3e2');
     noError = true;
   }
@@ -163,7 +166,6 @@ $('.activities input[type=checkbox]').change(function(){
     document.getElementById("running-total").innerHTML = `<p>Total: $${runningTotal}</p></br><p style='color: red'>Please Select at Least One activity</p>`;
     noError = false;
   }
-
 });
 
 // Payment Info
@@ -187,10 +189,12 @@ $('#payment').change(function(){
     $('#paypalJS').show();
     $('#credit-card').hide();
     $('#bitcoinJS').hide();
+    noError = true;
   } else if(this.value === 'bitcoin'){
     $('#bitcoinJS').show();
     $('#paypalJS').hide();
     $('#credit-card').hide();
+    noError = true;
   }
 });
 
@@ -200,19 +204,26 @@ $('label[for="cc-num"]').append('<div id="cc-num-validator" style="color: red"><
 $('#cc-num').keyup(function(){
   // Prechecks that the payment method selected is the credit card
   if($('#payment').val() === 'credit card'){
-    // Checks to see that the length is correct and that all that inputs are numbers
-    if($(this).val().length < 13 ||
-       $(this).val().length > 16 ||
-       /^\d+$/.test($(this).val()) === false) {
-         $(this).css('border-color', 'red');
-         document.getElementById('cc-num-validator').innerHTML = '<p>Must be a Number between 13 and 16 digits long</p>';
-         noError = false;
-
-       } else {
-         $(this).css('border-color', '#b0d3e2');
-         document.getElementById('cc-num-validator').innerHTML = '';
-         noError = true;
-       }
+    // Checks to make sure a number has been inputted before checking other issues
+    if($(this).val().length === 0) {
+      $(this).css('border-color', 'red');
+      document.getElementById('cc-num-validator').innerHTML = '<p>Please Enter a Credit Card Number</p>';
+      noError = false;
+    } else {
+      // Checks to see that the length is correct and that all that inputs are numbers
+      if($(this).val().length < 13 ||
+         $(this).val().length > 16 ||
+         /^\d+$/.test($(this).val()) === false ||
+         $(this).val().length != 0) {
+           $(this).css('border-color', 'red');
+           document.getElementById('cc-num-validator').innerHTML = '<p>Must be a Number between 13 and 16 digits long</p>';
+           noError = false;
+         } else {
+           $(this).css('border-color', '#b0d3e2');
+           document.getElementById('cc-num-validator').innerHTML = '';
+           noError = true;
+         }
+    }
   }
 });
 
@@ -266,12 +277,14 @@ $('form').submit(function() {
   //Checks to make sure name field isn't empty
   else if ($('#name').val().trim() === '') {
     $('#name').css('border-color', 'red');
+    document.querySelector('#name-validator').innerHTML = '<p>Please Enter Your Name</p>';
     document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Empty Name Field)</p>';
     noError = false;
   }
   // Checks to see if email field isn't empty
   else if ($('#mail').val().trim() === '') {
     $('#mail').css('border-color', 'red');
+    document.querySelector('#email-validator').innerHTML = '<p>Please enter your email address</p>';
     document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Incorrect Email Field)</p>';
     noError = false;
   }
@@ -281,6 +294,7 @@ $('form').submit(function() {
     $('#credit-card input').each(function() {
       if($(this).val().trim() === '') {
         $(this).css('border-color', 'red');
+        document.getElementById(`${this.id}-validator`).innerHTML = '<p>This field cannot be empty</p>';
         document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Credit Card Info Invalid)</p>';
         noError = false;
       }
@@ -288,6 +302,7 @@ $('form').submit(function() {
   }
   // Checks to make sure at least one activity is selected
   else if($('.activities input:checked').length === 0) {
+    document.getElementById("running-total").innerHTML = `<p>Total: $${runningTotal}</p></br><p style='color: red'>Please Select at Least One activity</p>`;
     document.getElementById('submit-validator').innerHTML = '<p>Please Verify that all information to be submitted is filled out and correct(Please Select at least one activity)</p>';
     noError = false;
   }
